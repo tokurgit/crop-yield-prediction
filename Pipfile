@@ -15,6 +15,8 @@ jupyter = "*"
 flask = "*"
 gunicorn = "*"
 marshmallow = "*"
+pyyaml = "==5.3.1"
+awsebcli = "==3.20.3"
 
 [dev-packages]
 

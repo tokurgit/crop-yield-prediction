@@ -17,13 +17,16 @@ This is the project structure
 │   ├── yield.csv
 │   └── yield_df.csv
 ├── Dockerfile
+├── __init__.py
 ├── LICENSE
 ├── model.bin
 ├── notebook.ipynb
 ├── Pipfile
 ├── Pipfile.lock
 ├── predict.py
+├── predict-test.py
 ├── README.md
+├── serializer.py
 └── train.py
 ```
 
@@ -33,9 +36,7 @@ The [data](./data/) folder contains the source data from the [Kaggle dataset](ht
 
 [notebook.ipynb](notebook.ipynb) contains the actions taken to explore the dataset, train different models and eventually arrive at the final model that is used in production for making the predictions.
 
-## The model
-
-The model is available at - **insert the link**.
+## The model (available at - http://crop-yield-prediction-dev.eu-west-1.elasticbeanstalk.com/)
 
 It's main purpose is to create a prediction about the crop yield, using the `hg/ha` unit of measurement.
 
@@ -212,3 +213,23 @@ The result is given in three units of measurement and the response looks like th
 2. Run the docker container with
    - `docker run -it --rm -p 9696:9696 crop-predict`
 3. Test if model works by running `python predict-test.py` in a new terminal window
+
+### Deploy the model using AWS ElasticBeanstalk
+- Follow [Running the model locally](#running-the-model-locally) instructions 0.-1.
+- Follow [Running the model locally using Docker container](#running-the-model-locally-using-docker-container) instructions 0.
+- Run AWS Elastic Beanstalk locally and check if you are able to make predictions
+  - `eb local run --port 9696 --debug --verbose`
+  - `python predict.py`
+- When you've made sure the app works locally, you can publish it to the world
+  - `eb create`
+    - Accepting the default options in CLI is OK
+  - You can check application status with `eb status`
+    - If app is successfully deployed, it would show
+      - Status: Ready
+      - Health: Green
+  - Open the deployed app in browser with `eb open`
+  - Check the last logs from the deployed app with `eb logs`
+  - Check other available methods `eb --help`
+  - You should be able to make predictions, using the URL pattern `http://<CNAME>/predict`
+  - Remember to terminate your app if it's no longer needed with `eb terminate`
+
