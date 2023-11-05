@@ -12,6 +12,8 @@ scikit-learn = "*"
 xgboost = "*"
 ngboost = "*"
 jupyter = "*"
+flask = "*"
+gunicorn = "*"
 
 [dev-packages]
 
