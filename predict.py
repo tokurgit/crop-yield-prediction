@@ -4,6 +4,9 @@ import pickle
 from flask import Flask, Response
 from flask import request
 from flask import jsonify
+from serializer import CropDataSchema
+from marshmallow.exceptions import ValidationError
+
 
 model_file_name = "model.bin"
 app = Flask("crop_yield")
@@ -15,9 +18,9 @@ with open(model_file_name, "rb") as f_in:
     dv, model = pickle.load(f_in)
 
 
-@app.route("/health", methods=["GET"])
+@app.route("/", methods=["GET"])
 def health_check() -> Response:
-    return jsonify({"status": "healthy"})
+    return jsonify({"status": "LIVE"})
 
 
 def predict_crop_yield(field_data: dict) -> int:
@@ -35,14 +38,22 @@ def predict_crop_yield(field_data: dict) -> int:
 def predict() -> Response:
     try:
         field_data = request.get_json()
+        # validate incoming data
+        CropDataSchema().load(field_data)
+    except ValidationError as exc:
+        logger.error(f"Incorrect data provided {exc} in request", exc_info=1)
+        return jsonify(exception=exc.messages)
     except Exception as exc:
         logger.error(f"Error {exc} occured while parsing data from request", exc_info=1)
         return jsonify(exception=exc)
 
     y_pred = predict_crop_yield(field_data)
-
     result = {
-        "predicted_yield (hg/ha)": y_pred,
+        "predicted_yield": {
+            "hectograms_per_hectare": y_pred,
+            "kilograms_per_hectare": (y_pred * 0.1).round(2),
+            "tonnes_per_hectare": (y_pred * 0.0001).round(2),
+        },
     }
     return jsonify(result)
 
