@@ -36,7 +36,7 @@ The [data](./data/) folder contains the source data from the [Kaggle dataset](ht
 
 [notebook.ipynb](notebook.ipynb) contains the actions taken to explore the dataset, train different models and eventually arrive at the final model that is used in production for making the predictions.
 
-## The model (available at - http://crop-yield-prediction-dev.eu-west-1.elasticbeanstalk.com/)
+## The model
 
 It's main purpose is to create a prediction about the crop yield, using the `hg/ha` unit of measurement.
 
